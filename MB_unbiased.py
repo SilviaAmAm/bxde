@@ -43,7 +43,7 @@ writer = the_writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 num_steps = 4000
 time_step = 0.001
 mass = [1]
-zeta = 5  # Friction parameter for Langevin Thermostat, if set to 0 for NVE simulation
+zeta = 5  # Friction parameter for Langevin Thermostat, set to 0 for NVE simulation
 Temp = 15  # Temperature K
 kB = 1  # Boltzmann constant
 
