@@ -61,3 +61,5 @@ max_impact = 20
 ```
 
 The maximum number of impacts with the higher boundary can be specified through `max_impact`.
+
+If the particle does not explore at least 3 boxes, the update_grey function will give an error. If this happens, increase the number of time steps that he simulation is run for.

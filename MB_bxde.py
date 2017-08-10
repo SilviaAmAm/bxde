@@ -42,10 +42,8 @@ def update_grey(frame, line_main, line_history, trajectory, ax):
     The line_main object contains the current position of the system, while line_history contains the time history of
     where it has been. It also adds grey areas to the zones that the particle has visited and can't visit anymore.
 
-    To make the grey zones appear at the right moment:
-    1) Output the file "results.txt" and see how many time steps the system spends in each box.
-    2) Add them up so that you know at which time step the particle exits a box
-    3) Work out which is the frame that has the particle outside a box.
+    To increase the number of grey zones that appear add more elements to the 'change' list in the same way that they have
+    been added up to now.
 
     :param frame: int
     :param line_main: object belonging to the matplotlib.lines.Line2D class
@@ -55,12 +53,18 @@ def update_grey(frame, line_main, line_history, trajectory, ax):
     :return: line_main - object belonging to the matplotlib.lines.Line2D class
     """
 
-    if frame == 150:    # Change this number with the frame number at which a grey area should appear
-        bxd.mixed_contour(sep_bound, contour_lines, -100, ax)
-    elif frame == 685:
-        bxd.mixed_contour(sep_bound, contour_lines, -50, ax)
-    elif frame == 1680:
-        bxd.mixed_contour(sep_bound, contour_lines, 0, ax)
+    change = np.zeros(3)
+    change[0] = final_times[0] - final_times[0] % increment
+    change[1] = (final_times[0] + final_times[1]) - (final_times[0] + final_times[1]) % increment
+    change[2] = (final_times[0] + final_times[1] + final_times[2]) - (final_times[0] + final_times[1] + final_times[
+        2]) % increment
+
+    if frame == change[0]:    # Change this number with the frame number at which a grey area should appear
+        bxd.mixed_contour(sep_bound, contour_lines, contour_lines[1], ax)
+    elif frame == change[1]:
+        bxd.mixed_contour(sep_bound, contour_lines, contour_lines[2], ax)
+    elif frame == change[2]:
+        bxd.mixed_contour(sep_bound, contour_lines, contour_lines[3], ax)
 
     current_pos = [trajectory[2 * frame]], [trajectory[2 * frame + 1]]
 
@@ -80,10 +84,10 @@ the_writer = animation.writers['ffmpeg']
 writer = the_writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 
 # Parameters needed
-num_steps = 4000
+num_steps = 8000
 time_step = 0.001
 mass = [1]
-zeta = 5  # Friction parameter for Langevin Thermostat - zeta=0 gives NVE
+zeta = 10  # Friction parameter for Langevin Thermostat - zeta=0 gives NVE
 temp = 100
 kb = 1  # kB in atomic units is 1 by definition
 
@@ -96,10 +100,10 @@ trajectory = current_pos[0,:]        # This 1D vector will contain the whole tra
 # Defining the BXD energy boundaries and the maximum number of impacts with a boundary
 global sep_bound, contour_lines
 current_pot = muller_brown.MB_potential(current_pos[0,0], current_pos[0,1])
-sep_bound = 30               # energy separation of the boxes
+sep_bound = 50               # energy separation of the boxes
 initial_box = current_pot - sep_bound * 0.5
 high_bound, low_bound = bxd.BXD_boundaries(current_pot, sep_bound, initial_box)
-max_impact = 20
+max_impact = 30
 
 # Defining the counters
 low_counter = 0                         # These count the impacts with the boundaries of a box
@@ -107,11 +111,12 @@ high_counter = 0
 final_counts_high = []         # These will contain the overall count of impacts per boundary
 final_counts_low = []
 time_counter = 0                        # This counts the time-steps in each box
+global final_times
 final_times = []              # This will contain the counts for each box
 
 # Preparing for plotting the potential (background to the animation)
-x_range = np.arange(-2.5, 1.4, 0.0025)
-y_range = np.arange(-0.7, 2.5, 0.0025)
+x_range = np.arange(-2.5, 1.4, 0.001)
+y_range = np.arange(-0.7, 2.5, 0.001)
 X, Y = np.meshgrid(x_range, y_range)
 Z = muller_brown.MB_potential(X,Y)
 
@@ -164,11 +169,13 @@ for i in range(0,num_steps):
     trajectory = np.concatenate((trajectory,current_pos[0,:]),axis=0)
 
 # Uncomment the following lines to output information for postprocessing to a file
-import output
-output.write_kinetics(final_counts_high, final_counts_low, final_times, time_step)
+# import output
+# output.write_kinetics(final_counts_high, final_counts_low, final_times, time_step)
 
 # Animation
-frames = list(range(0, num_steps, 2)) # Increasing the increment speeds up the animation
-ani = animation.FuncAnimation(fig, update, frames, init_func=None, blit=False, interval=1, fargs=(part_fig, history_fig, trajectory, ax))
-# ani.save('BXD_01.mp4', writer=writer) # Uncomment to save the animation in mp4 format
+global increment
+increment = 2 # Increasing the increment speeds up the animation
+frames = list(range(0, num_steps, increment))
+ani = animation.FuncAnimation(fig, update_grey, frames, init_func=None, blit=False, interval=1, fargs=(part_fig, history_fig, trajectory, ax))
+# ani.save('BXD_NVT.mp4', writer=writer, dpi=400) # Uncomment to save the animation in mp4 format
 plt.show()
