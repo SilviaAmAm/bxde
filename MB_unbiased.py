@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import muller_brown
 import Langevin_eq
+plt.rcParams['animation.ffmpeg_path'] = '/Users/walfits/anaconda3/envs/deffi/bin/ffmpeg' # Change this to ffmpeg binary
 
 def update(frame, line_main, line_history, trajectory):
     """
@@ -36,20 +37,20 @@ def update(frame, line_main, line_history, trajectory):
 
 
 # Set up formatting for the movie files
-writer = animation.FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+writer = animation.FFMpegWriter(fps=15, bitrate=1800)
 
 # Parameters needed
 num_steps = 4000
 time_step = 0.001
 mass = [1]
-zeta = 5  # Friction parameter for Langevin Thermostat, set to 0 for NVE simulation
+zeta = 0  # Friction parameter for Langevin Thermostat, set to 0 for NVE simulation
 Temp = 15  # Temperature K
 kB = 1  # Boltzmann constant
 
 
 # Initialising position and velocities
 current_pos = np.array([0.3, 0.4])
-current_vel = np.array([-0.5, 0.5])
+current_vel = np.array([-0.2, 0.2])
 dim = current_vel.shape
 current_force = muller_brown.MB_force(current_pos[0], current_pos[1])
 trajectory = current_pos
@@ -62,8 +63,8 @@ Z = muller_brown.MB_potential(X,Y)
 
 # Plotting the potenital and the particle (this is a 'line', otherwise the animation function won't accept it)
 fig = plt.figure()
-sep_bound = 25 # Separation between the lines of the contour
-contour_lines = np.arange(-200.0, 400, sep_bound)
+sep_bound = 30 # Separation between the lines of the contour
+contour_lines = np.arange(-250.0, 400, sep_bound)
 back_fig = plt.contourf(X, Y, Z, 50, alpha=.75, cmap='rainbow', extend="both", levels=contour_lines)
 part_fig, = plt.plot(current_pos[0], current_pos[1], ls='None', lw=1.0, color='blue', marker='o', ms=8, alpha=1)
 history_fig, = plt.plot([], [], lw=2.0, color='#2c70a3', alpha=0.5)
@@ -84,7 +85,7 @@ for i in range(0,num_steps):
     trajectory = np.concatenate((trajectory,current_pos),axis=0)
 
 
-frames = list(range(0, num_steps, 5))
+frames = list(range(0, num_steps, 20))
 ani = animation.FuncAnimation(fig, update, frames, init_func=None, blit=False, interval=1, fargs=(part_fig, history_fig, trajectory))
-# ani.save('MD_NVE.mp4', writer=writer) # Uncomment this to save the animation as a mp4 file
+ani.save(filename='MD.mp4', writer=writer, dpi=200) # Uncomment this to save the animation as a mp4 file
 plt.show()

@@ -8,6 +8,7 @@ import matplotlib.animation as animation
 import muller_brown
 import bxd
 import Langevin_eq
+plt.rcParams['animation.ffmpeg_path'] = '/Users/walfits/anaconda3/envs/deffi/bin/ffmpeg' # Change this to ffmpeg binary
 
 
 def update(frame, line_main, line_history, trajectory, ax):
@@ -83,16 +84,16 @@ def update_grey(frame, line_main, line_history, trajectory, ax):
 writer = animation.FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 
 # Parameters needed
-num_steps = 8000
+num_steps = 4000
 time_step = 0.001
 mass = [1]
 zeta = 10  # Friction parameter for Langevin Thermostat - zeta=0 gives NVE
-temp = 100
+temp = 15
 kb = 1  # kB in atomic units is 1 by definition
 
 # Initialising position and velocities
 current_pos = np.array([0.6, 0]).reshape((1,2))
-current_vel = np.array([-14, -16]).reshape((1,2))
+current_vel = np.array([-13, -15]).reshape((1,2))
 current_force = muller_brown.MB_force(current_pos[0,0], current_pos[0,1]).reshape((1,2))
 trajectory = current_pos[0,:]        # This 1D vector will contain the whole trajectory
 
@@ -174,8 +175,8 @@ for i in range(0,num_steps):
 
 # Animation
 global increment
-increment = 4 # Increasing the increment speeds up the animation
+increment = 20 # Increasing the increment speeds up the animation
 frames = list(range(0, num_steps, increment))
 ani = animation.FuncAnimation(fig, update_grey, frames, init_func=None, blit=False, interval=1, fargs=(part_fig, history_fig, trajectory, ax))
-ani.save('BXD_NVT.mp4', writer=writer, dpi=200) # Uncomment to save the animation in mp4 format
+ani.save('BXD_1.mp4', writer=writer, dpi=200) # Uncomment to save the animation in mp4 format
 plt.show()
