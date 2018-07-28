@@ -36,8 +36,7 @@ def update(frame, line_main, line_history, trajectory):
 
 
 # Set up formatting for the movie files
-the_writer = animation.writers['ffmpeg']
-writer = the_writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+writer = animation.FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 
 # Parameters needed
 num_steps = 4000

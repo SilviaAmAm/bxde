@@ -80,8 +80,7 @@ def update_grey(frame, line_main, line_history, trajectory, ax):
     return line_main,
 
 # Set up formatting for the movie files
-the_writer = animation.writers['ffmpeg']
-writer = the_writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+writer = animation.FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 
 # Parameters needed
 num_steps = 8000
@@ -125,6 +124,7 @@ contour_lines = bxd.BXD_contour(sep_bound, initial_box)
 fig = plt.figure()
 ax = plt.axes()
 back_fig = ax.contourf(X, Y, Z, 50, alpha=.75, cmap='rainbow', extend="both", levels= contour_lines)
+# plt.colorbar(back_fig)
 part_fig, = ax.plot(current_pos[0,0], current_pos[0,1], ls='None', lw=1, color='blue', marker='o', ms=8, alpha=1)
 history_fig, = ax.plot([], [], lw=1.5, color='#1f537a', alpha=0.4)  # for dotted history add :ls="None", marker="o", mew=0.0
 
@@ -174,8 +174,8 @@ for i in range(0,num_steps):
 
 # Animation
 global increment
-increment = 2 # Increasing the increment speeds up the animation
+increment = 4 # Increasing the increment speeds up the animation
 frames = list(range(0, num_steps, increment))
 ani = animation.FuncAnimation(fig, update_grey, frames, init_func=None, blit=False, interval=1, fargs=(part_fig, history_fig, trajectory, ax))
-# ani.save('BXD_NVT.mp4', writer=writer, dpi=400) # Uncomment to save the animation in mp4 format
+ani.save('BXD_NVT.mp4', writer=writer, dpi=200) # Uncomment to save the animation in mp4 format
 plt.show()
