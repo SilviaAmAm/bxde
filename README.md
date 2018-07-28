@@ -49,6 +49,18 @@ kB = 1  # Boltzmann constant
 
 In addition, to run a NVE simulation, set `zeta = 0`. Otherwise, set to a suitable value for NVT simulation.
 
+If you want to save the animations, there are a few things to check. Since recently, I have had to add this line at the top of the script:
+
+```python
+plt.rcParams['animation.ffmpeg_path'] = '/Users/walfits/anaconda3/envs/deffi/bin/ffmpeg'
+```
+
+so you will have to change the path to where your ffmpeg binary lives. Then, you need to make sure that this line at the bottom of the script is uncommented:
+
+```python
+ani.save(filename='MD.mp4', writer=writer, dpi=200)
+```
+
 ### MB_bxde.py
 
 The same parameters as for MB_unbiased.py can be modified. In addition, the separation between the bxd boundaries in energy space can be changed by modifying the value of `sep_bound`:
@@ -66,3 +78,15 @@ max_impact = 20
 The maximum number of impacts with the higher boundary can be specified through `max_impact`.
 
 If the particle does not explore at least 3 boxes, the update_grey function will give an error. If this happens, increase the number of time steps that he simulation is run for.
+
+If you want to save the animations, there are a few things to check. Since recently, I have had to add this line at the top of the script:
+
+```python
+plt.rcParams['animation.ffmpeg_path'] = '/Users/walfits/anaconda3/envs/deffi/bin/ffmpeg'
+```
+
+so you will have to change the path to where your ffmpeg binary lives. Then, you need to make sure that this line at the bottom of the script is uncommented:
+
+```python
+ani.save(filename='BXD.mp4', writer=writer, dpi=200)
+```
