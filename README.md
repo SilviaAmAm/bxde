@@ -24,9 +24,12 @@ This script plots an animation of a simulation of a point particle in a model 2D
 
 ## How to use the scripts
 
+The interpreter used was python 3.6
+
 Both scripts depend on the following packages:
 1. Numpy
 2. Matplotlib
+3. FFMpeg (optional)
 
 In order to be able to save the animations, here ffmpeg is used. This can be installed using Anaconda. See this link: https://anaconda.org/menpo/ffmpeg
 
