@@ -1,26 +1,28 @@
 # Simulation of model systems with boxed molecular dynamics
 
-This repository contains the following modules:
+![](https://github.com/SilviaAmAm/bxde/blob/master/visuals/bxd.gif)
 
-1. __bxd.py__:
-This module contains the function that generate the BXD boundaries and the function that does the velocity inversion.
+This repository contains the following scripts:
 
-2. __Langevin_eq.py__:
-This module contains the functions that are required to do the Velocity Verlet algorithm with the Langevin equation of motion.
-
-3. __muller_brown.py__:
-This module contains the functions needed to calculate the forces and the potential energy acting on a 2D point particle in a model Muller-Brown potential.
-
-4. __output.py__:
-This module contains function that enable to write data from the simulation to a file.
-
-And it contains the following scripts:
-
-1. __MB_unbiased.py__:
+1. [MB_unbiased.py](./MB_unbiased.py):
 This script plots an animation of a simulation of a point particle in a model 2D Muller-Brown potential. It can be run in NVE or NVT ensembles.
 
-2. __MB_bxde.py__:
+2. [MB_bxde.py](./MB_bxde.py):
 This script plots an animation of a simulation of a point particle in a model 2D Muller-Brown potential with BXD in energy space. It can be run in NVE or NVT.
+
+The main functionality is implemented in:
+
+1. [bxd.py](./bxd.py):
+This contains the function that generate the BXD boundaries and the function that does the velocity inversion.
+
+2. [Langevin_eq.py](./Langevin_eq.py):
+This contains the functions that are required to do the Velocity Verlet algorithm with the Langevin equation of motion.
+
+3. [muller_brown.py](./muller_brown.py):
+This contains the functions needed to calculate the forces and the potential energy acting on a 2D point particle in a model Muller-Brown potential.
+
+4. [output.py](./output.py):
+This contains the function that enable to write data from the simulation to a file.
 
 ## How to use the scripts
 
@@ -49,10 +51,10 @@ kB = 1  # Boltzmann constant
 
 In addition, to run a NVE simulation, set `zeta = 0`. Otherwise, set to a suitable value for NVT simulation.
 
-If you want to save the animations, there are a few things to check. Since recently, I have had to add this line at the top of the script:
+If you want to save the animations, there are a few things to check. You may have to add this line at the top of the script:
 
 ```python
-plt.rcParams['animation.ffmpeg_path'] = '/Users/walfits/anaconda3/envs/deffi/bin/ffmpeg'
+plt.rcParams['animation.ffmpeg_path'] = '/path/to/ffmpeg'
 ```
 
 so you will have to change the path to where your ffmpeg binary lives. Then, you need to make sure that this line at the bottom of the script is uncommented:
@@ -78,15 +80,3 @@ max_impact = 20
 The maximum number of impacts with the higher boundary can be specified through `max_impact`.
 
 If the particle does not explore at least 3 boxes, the update_grey function will give an error. If this happens, increase the number of time steps that he simulation is run for.
-
-If you want to save the animations, there are a few things to check. Since recently, I have had to add this line at the top of the script:
-
-```python
-plt.rcParams['animation.ffmpeg_path'] = '/Users/walfits/anaconda3/envs/deffi/bin/ffmpeg'
-```
-
-so you will have to change the path to where your ffmpeg binary lives. Then, you need to make sure that this line at the bottom of the script is uncommented:
-
-```python
-ani.save(filename='BXD.mp4', writer=writer, dpi=200)
-```
